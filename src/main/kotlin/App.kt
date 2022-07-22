@@ -1,37 +1,47 @@
 
-// константа времени компиляции, к моменту запуска main-функции она уже существует
-const val SOME_VAL = 5//это значение никогда не изменяется
-
 fun main(args: Array<String>) {
-    println("Hello world!")
-    var a = 1
-    var s = 2
-    var res = if(a == 1){
-        var a = 1
-        var b = 3
-        s
-    }else{
-        s += 6
-        s
+
+    //вызов с именованными параметрами
+    funWithOneExpression(arg2 = 5, arg1 = 7)
+
+    //функ крешает при вызове
+    //exampleFunWithNothingType()
+
+    //объявление анонимной функции без параметров
+    val greetingFunction: () -> String = {
+        val currentYear = 2018
+        //анонимная функция позволяет не использовать оператор return
+        "Welcome to SimVillage, Mayor! (copyright $currentYear)"
+    }
+    //можно инвокнуть функцию так
+    var str = greetingFunction.invoke()
+    //или так
+    var stri = greetingFunction()
+
+    //анонимная функция с использованием ключевого слова it, которое может употребляться вместо первого параметра
+    val greetingFunction1: (String) -> String = {
+        val currentYear = 2018
+        "Welcome to SimVillage, $it! (copyright $currentYear)"
+    }
+    println(greetingFunction1("Guyal"))
+
+
+    //анон функция с несколькими параметрами
+    val anonymousFuncWithParameters: (String, Double) -> String = { someParam, doubleParam ->
+        val c = 5
+        val e = 3
+        someParam + c.toString() + e.toString() + doubleParam.toString()
     }
 
-    //тут используется оператор интервала .. для проверки значения
-    if ( res in 0..100){
-        println("The value is ok")
+    println({
+        val year = 2018
+        "Welcome to SimVillage, Mayor! (copyright $year)"
+    })
+
+    var anonFunc = { param1: Int, param2: Int ->
+        var someVar = param1 + 1
+        var someNewVar = param2 + 1
     }
-
-    //конструкция when, является аналогом switch case в других языках
-    var someCar = "Bugatti"
-    var car = when (someCar){
-        "Pagani" -> println("Ronaldo buys Pagani")
-        "Camaro" -> println("Maguire buys Camaro")
-        else -> println("No news about byuings")
-    }
-
-    println("$SOME_VAL")
-
-    castFireball()
-
 }
 
 //по-умолчанию у всех фунций доступ public при объявлении
@@ -54,4 +64,16 @@ private fun formatHealthStatus(healthPoints: Int, isBlessed: Boolean):
 //аргумент по-умолчанию
 private fun castFireball(numFireballs: Int = 2) {
     println("A glass of Fireball springs into existence. (x$numFireballs)")
+}
+
+//функция с одним выражением
+fun funWithOneExpression(arg1: Int, arg2: Int) : Unit = println("Hello world!")
+
+//использование типа Nothing
+fun exampleFunWithNothingType() : Nothing {
+    var m = 4
+    var res = "res"
+    println("Hello, this function will crash...")
+    //TODO()
+    throw NotImplementedError()
 }
