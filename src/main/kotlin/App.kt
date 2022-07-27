@@ -1,37 +1,17 @@
 
 fun main(args: Array<String>) {
 
-    var res = funcWithFuncInParam(
-        value = 5,
-        someString = "String",
-        function = { param1: Int, param2: Double ->
-            param1.toString() + param2.toString()
-        },
-    )
-
-    //Сокращенный синтаксис можно использовать, только когда лямбда передается в функцию как последний аргумент.
-    "Mississippi".count({ it == 's' })
-
-    "Mississippi".count { it == 's' }
-
-    funcWithFuncInParam(5, { someInt, someDouble ->
-        someInt.toString() + someDouble.toString()
-    }, "5")
-
-    runSimulation("Guyal") { playerName, numBuildings ->
-        val currentYear = 2018
-        println("Adding $numBuildings houses")
-        "Welcome to SimVillage, $playerName! (copyright $currentYear)"
-    }
-
+    var func = ::additionFunction
+    var func1: (Int, Int) -> Int = ::additionFunction
+    //workWithNums(10, 10, ::additionFunction)
+    //workWithNums(10, 10, func)
 }
 
-inline fun funcWithFuncInParam(value: Int, function: (Int, Double) -> String, someString: String) : String{
-    return value.toString() + function.invoke(5, 7.0)
+fun additionFunction(a: Int, b: Int): Int{
+    return a + b
 }
 
-inline fun runSimulation(playerName: String,
-                         greetingFunction: (String, Int) -> String) {
-    val numBuildings = (1..3).shuffled().last() // Случайно выберет 1, 2 или 3
-    println(greetingFunction(playerName, numBuildings))
+fun workWithNums(firstOperand: Int, secondOperand: Int, mathFunc: (Int, Int) -> Int) {
+    val result = mathFunc(firstOperand, secondOperand)
+    println("The result of operation is $result")
 }
