@@ -1,41 +1,23 @@
 fun main(args: Array<String>) {
 
-    var func = ::additionFunction
-    var func1: (Int, Int) -> Int = ::additionFunction
-    //workWithNums(10, 10, ::additionFunction)
-    //workWithNums(10, 10, func)
-
-    //var beverage = readLine()
-    //var res = beverage?.capitalize()
-
-    var string = generationFunc()
-    var op = string?.let {
-        "$it Hello world!"
+    var swordsJuggling: Int? = null
+    val isJugglingProficient = (1..3).shuffled().last() == 3
+    if (isJugglingProficient) {
+        swordsJuggling = 2
     }
 
-    //выбросить умышленно исключение
-    //var nonNull = op!!.capitalize()
-
-    var str = op ?: "Hello world!"
-    
-}
-
-fun generationFunc(): String? {
-
-    var num = Math.random()
-    var res = if (num > 0.5) {
-        null
-    } else {
-        "Number is $num"
+    try {
+        proficiencyCheck(swordsJuggling)
+        swordsJuggling = swordsJuggling!!.plus(1)
+    } catch (e: Exception) {
+        println(e)
     }
-    return res
+    println("You juggle $swordsJuggling swords!")
 }
 
-fun additionFunction(a: Int, b: Int): Int {
-    return a + b
+fun proficiencyCheck(swordsJuggling: Int?) {
+//    swordsJuggling ?: throw UnskilledSwordJugglerException()
+    checkNotNull(swordsJuggling) { "diff" }
 }
-
-fun workWithNums(firstOperand: Int, secondOperand: Int, mathFunc: (Int, Int) -> Int) {
-    val result = mathFunc(firstOperand, secondOperand)
-    println("The result of operation is $result")
-}
+class UnskilledSwordJugglerException() :
+    IllegalStateException("Player cannot juggle swords")
