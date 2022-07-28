@@ -1,13 +1,37 @@
-
 fun main(args: Array<String>) {
 
     var func = ::additionFunction
     var func1: (Int, Int) -> Int = ::additionFunction
     //workWithNums(10, 10, ::additionFunction)
     //workWithNums(10, 10, func)
+
+    //var beverage = readLine()
+    //var res = beverage?.capitalize()
+
+    var string = generationFunc()
+    var op = string?.let {
+        "$it Hello world!"
+    }
+
+    //выбросить умышленно исключение
+    //var nonNull = op!!.capitalize()
+
+    var str = op ?: "Hello world!"
+    
 }
 
-fun additionFunction(a: Int, b: Int): Int{
+fun generationFunc(): String? {
+
+    var num = Math.random()
+    var res = if (num > 0.5) {
+        null
+    } else {
+        "Number is $num"
+    }
+    return res
+}
+
+fun additionFunction(a: Int, b: Int): Int {
     return a + b
 }
 
