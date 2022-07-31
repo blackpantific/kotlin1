@@ -1,61 +1,40 @@
 import java.io.File
 
+//listOf создает список только для чтения
+//val patronList = listOf("Eli", "Mordoc", "Sophie")
+//mutableListOf создает изменяемый список
+val patronList = mutableListOf("Eli", "Mordoc", "Sophie")
+
 fun main(args: Array<String>) {
 
-    var mc = MyClass()
-    //функция apply позволяет не использовать имя переменной при вызове методов или
-    //записи информаци в поля
-    // как параметр в лямбду передается экземпляр класса, но лямбда ничего не возвращает
-    mc.apply {
-        name = "Igor"
-        age = 22
+    var value = patronList[0]
+    var res = patronList.getOrElse(4) { "some string" }
+
+    if (patronList.contains("Eli")) {
+        println("The tavern master says: Eli's in the back playing cards.")
+    } else {
+        println("The tavern master says: Eli isn't here.")
     }
 
-    //схоже с apply, но лямбда может возвращать значение
-    val menuFile = File("menu-file.txt")
-    val servesDragonsBreath = menuFile.run {
-        readText().contains("Dragon's Breath")
+    patronList.remove("Eli")
+    patronList.add("Alex")
+    println(patronList)
+
+    patronList.forEachIndexed { index, patron ->
+        println("Good evening, $patron - you're #${index + 1} in line.")
     }
 
-    "Madrigal".run(::nameIsLong) // Ложь
-    "Polarcubis, Supreme Master of NyetHack".run(::nameIsLong) // Истина
+    //или же как альтернатива
+    for ((index, i) in patronList.withIndex()) {
 
-    //скорее всего синтаксист типа Т.() подразумевает синтаксис, в котором лямбда
-    //пишется без аргументов
-    mc.run(::someCheck)
-
-    val status = run {
-        if (mc.age == 100) "perfect health" else "has injuries"
     }
 
-    //похоже на let, но ничего не возвращает
-    "some string"
-        .also { println(it.length) }
-        .also { println("$it hello") }
+    val patronGold = mutableMapOf("Eli" to 10.5, "Mordoc" to 8.0, "Sophie" to 5.5)
 
-    //takeIf если условие выполняется возвращает объект, если нет, то null
-    val fileContents = File("myfile.txt")
-        .takeIf { it.canRead() && it.canWrite() }
-        ?.readText()
+    patronGold.keys.toList().forEach {
+        println(it)
+    }
+    patronGold["Tom"] = 10.6
 
-    var num1 = 5
-}
 
-fun formatGreeting(vipGuest: String?): String {
-
-    //let проверяет значение на null и в противном случае проводит действия в лямбде
-    return vipGuest?.let {
-        "Welcome, $it. Please, go straight back - your table is ready."
-    } ?: "Welcome to the tavern. You'll be seated soon."
-}
-
- class MyClass{
-     var name: String? = null
-     var age: Int? = null
- }
-
-fun nameIsLong(name: String) : Boolean = name.length >= 20
-
-fun someCheck(myClass: MyClass) : Int? {
-    return myClass.age
 }
