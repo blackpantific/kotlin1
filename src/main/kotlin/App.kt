@@ -1,4 +1,7 @@
 fun main(args: Array<String>) {
 
-    var player = Player("Alexander")
+    val sword = Sword("Excalibur")
+    println(sword.name)
+    sword.name = "Gleipnir"
+    println(sword.name)
 }
