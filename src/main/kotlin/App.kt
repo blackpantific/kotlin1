@@ -1,23 +1,23 @@
 fun main(args: Array<String>) {
 
-    var coordinate = Coordinate(1, 0)
-    //пример деструктуризации, которая под капотом выполняется автоматически
-    var (x, y) = coordinate
-
+    var value = Direction.NORTH
+    if(value == Direction.NORTH)
+    {
+        var res = Direction.NORTH.updateCoordinate(Coordinate(10,20))
+    }
 }
 
-//обычный класс тоже можно деструктурировать таким способом
-class PlayerScore(val experience: Int, val level:Int ){
-    operator fun component1() = experience
-    operator fun component2() = level
+enum class Direction(private val coordinate: Coordinate) {
+    NORTH(Coordinate(0, -1)),
+    EAST(Coordinate(1, 0)),
+    SOUTH(Coordinate(0, 1)),
+    WEST(Coordinate(-1, 0));
+
+    fun updateCoordinate(playerCoordinate: Coordinate) =
+        Coordinate(playerCoordinate.x + coordinate.x,
+            playerCoordinate.y + coordinate.y)
 }
 
-//класс данных
-//особенно полезен, если необходимо часто вызывать toString, copy, equals или hashCode и не хочется
-//прописывать эти методы самому
 data class Coordinate(val x: Int, val y: Int) {
     val isInBounds = x >= 0 && y >= 0
 }
-
-
-
