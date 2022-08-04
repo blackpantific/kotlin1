@@ -1,68 +1,55 @@
-import java.util.*
-
 fun main(args: Array<String>) {
 
-    var player: Player = Player("Tom", isBlessed = true, isImmortal = false)
-    player.attack(Player("Tom", isBlessed = true, isImmortal = false))
+    val lootBoxOne: LootBox<Fedora> = LootBox(
+        Fedora(
+            "a generic-looking fedora",
+            15
+        ),
+        Fedora("a dazzling magenta fedora", 25)
+    )
+    val lootBoxTwo: LootBox<Coin> = LootBox(Coin(15))
+    lootBoxOne.open = true
+    lootBoxOne.fetch(1)?.run {
+        println("You retrieve $name from the box!")
+    }
+
+    //можно использовать перегрузку операторов вместо кода ниже
+//    val coin = lootBoxOne.fetch(0) {
+//        Coin(it.value * 3)
+//    }
+//    coin?.let { println(it.value) }
+
+    val fedora = lootBoxOne[1]
+    fedora?.let { println(it.name) }
+
+//    val lootBoxTwo: LootBox<Coin> = LootBox(Coin(15))
+//    lootBoxOne.fetch()?.run {
+//        println("You retrieve $name from the box!")
+//    }
+//
+//    val coin = lootBoxOne.fetch() {
+//        Coin(it.value * 3)
+//    }
+//    coin?.let { println(it.value) }
 }
 
-interface Fightable {
-    var healthPoints: Int
-    val diceCount: Int
-    val diceSides: Int
-    //можно реализовать свойство по-умолчанию
-    val damageRoll: Int
-        get() = (0 until diceCount).map {
-            Random().nextInt(diceSides + 1)
-        }.sum()
+class LootBox<T : Loot>(vararg item: T) {
+    var open = false
+    private var loot: Array<out T> = item
 
-    //можно реализовать метод по-умолчанию
-    fun attack(opponent: Fightable): Int{
-        println("Attack started")
-        return 10
+    fun fetch(item: Int): T? {
+        return loot[item].takeIf { open }
+    }
+
+    operator fun get(index: Int): T? = loot[index].takeIf { open }
+
+    fun <R> fetch(item: Int, lootModFunction: (T) -> R): R? {
+        return lootModFunction(loot[item]).takeIf { open }
     }
 }
 
-//class Player(
-//    override var healthPoints: Int = 100,
-//    override val diceCount: Int,
-//    override val diceSides: Int,
-//    override val damageRoll: Int
-//) : Fightable {
-//    override fun attack(opponent: Fightable): Int {
-//        TODO("Not yet implemented")
-//    }
-//}
+open class Loot(val value: Int)
 
-class Player(
-    _name: String,
-    override var healthPoints: Int = 100,
-    var isBlessed: Boolean = false,
-    private var isImmortal: Boolean
-) : Fightable {
+class Fedora(val name: String, value: Int) : Loot(value)
 
-    override val diceCount: Int = 3
-
-    override val diceSides: Int = 6
-
-    override val damageRoll: Int = 10
-
-//    override fun attack(opponent: Fightable): Int {
-//        val damageDealt = if (isBlessed) {
-//            damageRoll * 2
-//        } else {
-//            damageRoll
-//        }
-//        opponent.healthPoints -= damageDealt
-//        return damageDealt
-//    }
-}
-
-abstract class Monster(
-    _name: String,
-    _age: Int){
-
-    abstract var name: String
-
-    abstract fun info()
-}
+class Coin(value: Int) : Loot(value)
