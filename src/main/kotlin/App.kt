@@ -1,47 +1,68 @@
+import java.util.*
+
 fun main(args: Array<String>) {
 
-    var myClass = MyClassWithDelegate()
-    myClass.someEvent = {int, double ->
-            "dgfgf"
-        }
-
+    var player: Player = Player("Tom", isBlessed = true, isImmortal = false)
+    player.attack(Player("Tom", isBlessed = true, isImmortal = false))
 }
 
-//interface Fightable {
-//    var healthPoints: Int
-//    val diceCount: Int
-//    val diceSides: Int
-//    val damageRoll: Int
-//    fun attack(opponent: Fightable): Int
+interface Fightable {
+    var healthPoints: Int
+    val diceCount: Int
+    val diceSides: Int
+    //можно реализовать свойство по-умолчанию
+    val damageRoll: Int
+        get() = (0 until diceCount).map {
+            Random().nextInt(diceSides + 1)
+        }.sum()
+
+    //можно реализовать метод по-умолчанию
+    fun attack(opponent: Fightable): Int{
+        println("Attack started")
+        return 10
+    }
+}
+
+//class Player(
+//    override var healthPoints: Int = 100,
+//    override val diceCount: Int,
+//    override val diceSides: Int,
+//    override val damageRoll: Int
+//) : Fightable {
+//    override fun attack(opponent: Fightable): Int {
+//        TODO("Not yet implemented")
+//    }
 //}
 
-public class ClassThatInvokes{
+class Player(
+    _name: String,
+    override var healthPoints: Int = 100,
+    var isBlessed: Boolean = false,
+    private var isImmortal: Boolean
+) : Fightable {
 
-    var someInt: Int
-    var someDouble: Double
+    override val diceCount: Int = 3
 
-    constructor(int: Int, double: Double){
-        someInt = int
-        someDouble = double
-//        MyClassWithDelegate.someEvent = {int, double ->
-//            "dgfgf"
+    override val diceSides: Int = 6
+
+    override val damageRoll: Int = 10
+
+//    override fun attack(opponent: Fightable): Int {
+//        val damageDealt = if (isBlessed) {
+//            damageRoll * 2
+//        } else {
+//            damageRoll
 //        }
-    }
+//        opponent.healthPoints -= damageDealt
+//        return damageDealt
+//    }
 }
 
-public class MyClassWithDelegate{
-    var someValue: Int? = null
+abstract class Monster(
+    _name: String,
+    _age: Int){
 
-    var someString: String? = null
+    abstract var name: String
 
-//    companion object{
-//        lateinit var someEvent: (val1: Int, val2: Int) -> String
-//    }
-
-    lateinit var someEvent: (val1: Int, val2: Int) -> String
-
-    fun invokeDelegate(){
-        println("Working with some process...")
-        var res = someEvent.invoke(5,7)
-    }
+    abstract fun info()
 }
