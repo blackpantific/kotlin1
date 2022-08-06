@@ -1,81 +1,49 @@
-import java.util.Base64
 
 fun main(args: Array<String>) {
 
-//    var a: Generic<A> = Generic(A("1"))
-//    var b: Generic<Base> = Generic(B(1))
-//
-//    var c: Generic<Base> = b
-//
-//    var res = c.item as A
-//
-//    var a1 = 5
+//    println("fdfdf".addEnthusiasm(5))
 
-    var a: Generic<A> = Generic(A("1"))
-    var b: Generic<Base> = Generic(B(1))
+    "Madrigal has left the building".easyPrint().addEnthusiasm().easyPrint()
+    42.easyPrint()
+    "Hello world".numVowels
 
-    b = a
+    val nullableString: String? = null
+    nullableString printWithDefault "Default string"
 
-    var fedoraBarrel: Barrel<Fedora> =
-        Barrel(Fedora("a generic-looking fedora", 15))
-    var lootBarrel: Barrel<Loot> = Barrel(Loot(10))
-
-    fedoraBarrel = lootBarrel
-
-    //короче на данном этапе я могу сделать следующие выводы
-    //out позволяет записать данные в дженерик класс, но поле, в котором будут храниться
-    //данные не доступно для изменения, из него можно только получить информацию
-    //in позволяет записать данные в класс, но получить их мы никак не можем, потому что поле
-    //в котором они хранятся имеет модификатор private
-    //то есть out T это тип T и все его наследники, а in T это тип T и все его родители
-
-    var res = randomOrBackupLoot {
-        Fedora("a backup fedora", 15)
-    }.run {
-        // Выведет backup fedora или fedora of the ages
-        println(name)
-    }
-
-}
-
-inline fun <reified T> randomOrBackupLoot(backupLoot: () -> T): T {
-    val items = listOf(Coin(14), Fedora("a fedora of the ages", 150))
-    val first: Loot = items.shuffled().first()
-
-    return if (first is T){
-        first
-     }else{
-         backupLoot.invoke()
+    var res = "Hello world some string".doSmthWithString {
+        //работать не будет потому что эти ф-ции возвращают новую стрингу
+        toUpperCase()
+        reversed()
     }
 }
 
+//если создать расширение для какого-то класса, то оно будет работать и на наследниках
+//fun Any.easyPrint() = println(this)
 
-//к примеру Generic<B> можем присвоить Generic<Base>, но изменить
-public class Generic<out T>(_item: T){//можем только инициализировать переменную единожды и потом читать из нее
-    val item: T = _item
+fun String.addEnthusiasm(amount: Int = 1) = this + "!".repeat(amount)
+
+//обобщенная функция-расширение
+fun <T> T.easyPrint(): T {
+    println(this)
+    return this
 }
 
-//public class Generic<T>(_item: T){
-//    var item: T = _item
-//}
+//свойства расширения
+val String.numVowels
+    get() = count { "aeiouy".contains(it) }
 
-public open class Base{
-    var baseProperty = "Base property string"
+//или же так
+fun String.numVowels(): Int = count { contains(it) }
+
+//Ключевое слово infix доступно для расширений и функций
+//класса с одним аргументом и позволяет использовать более
+//ясный синтаксис вызова функции. Если функция объявлена с infix,
+//вы можете отбросить точку между объектом- приемником и вызовом
+//функции, а также скобки вокруг аргумента.
+
+infix fun String?.printWithDefault(default: String) = print(this ?: default)
+
+public fun String.doSmthWithString(func: String.() -> String): String{
+    var res = this + func.invoke(this)
+    return res
 }
-public class A(_name: String) : Base() {
-
-    public var name: String = _name
-}
-
-public class B(_int: Int) : Base(){
-
-    public var number: Int = _int
-}
-
-class Barrel<in T>(private var item: T)
-
-open class Loot(val value: Int)
-
-class Fedora(val name: String, value: Int) : Loot(value)
-
-class Coin(value: Int) : Loot(value)
