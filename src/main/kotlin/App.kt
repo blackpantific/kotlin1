@@ -29,8 +29,25 @@ fun main(args: Array<String>) {
     //в котором они хранятся имеет модификатор private
     //то есть out T это тип T и все его наследники, а in T это тип T и все его родители
 
+    var res = randomOrBackupLoot {
+        Fedora("a backup fedora", 15)
+    }.run {
+        // Выведет backup fedora или fedora of the ages
+        println(name)
+    }
+
 }
 
+inline fun <reified T> randomOrBackupLoot(backupLoot: () -> T): T {
+    val items = listOf(Coin(14), Fedora("a fedora of the ages", 150))
+    val first: Loot = items.shuffled().first()
+
+    return if (first is T){
+        first
+     }else{
+         backupLoot.invoke()
+    }
+}
 
 
 //к примеру Generic<B> можем присвоить Generic<Base>, но изменить
