@@ -6,6 +6,12 @@ fun main(args: Array<String>) {
     pixel.takePhoto()
 }
 
+//делегирование свойств
+interface Messenger1{
+    val programName: String
+}
+class InstantMessenger1(override val programName: String) : Messenger1
+class SmartPhone1(val name: String, m: Messenger1) : Messenger1 by  m
 
 interface Messenger {
     fun send(message: String)
