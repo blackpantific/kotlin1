@@ -1,57 +1,26 @@
-@file:JvmName("Hero")
-
-import java.io.IOException
-import java.util.*
-
 fun main(args: Array<String>) {
-
-    val adversary = Jhava()
-    println(adversary.utterGreeting())
-
-    val friendshipLevel = adversary.determineFriendshipLevel()
-    println(friendshipLevel?.lowercase(Locale.getDefault()) ?: "It's complicated.")
-
-    val adversaryHitPoints: Int = adversary.hitPoints
-    println(adversaryHitPoints.dec())
-    println(adversaryHitPoints.javaClass)
-
-    adversary.greeting = "Hello, Hero."
-    println(adversary.utterGreeting())
-
-    adversary.offerFood()
-
-    try {
-        adversary.extendHandInFriendship()
-    } catch (e: Exception) {
-        println("Begone, foul beast!")
-    }
+    val telegram = InstantMessenger("Telegram")
+    val photoCamera = PhotoCamera()
+    val pixel = SmartPhone("Pixel 5", telegram, photoCamera)
+    pixel.send("Hello Kotlin")
+    pixel.takePhoto()
 }
 
-fun makeProclamation() = "Greetings, beast!"
 
-@JvmOverloads
-fun handOverFood(leftHand: String = "berries", rightHand: String = "beef") {
-    println("Mmmm... you hand over some delicious $leftHand and $rightHand.")
+interface Messenger {
+    fun send(message: String)
 }
 
-class Spellbook {
-    @JvmField
-    val spells = listOf("Magic Ms. L", "Lay on Hans")
-
-    companion object {
-        @JvmField
-        val MAX_SPELL_COUNT = 10
-
-        @JvmStatic
-        fun getSpellbookGreeting() = println("I am the Great Grimoire!")
-    }
+class InstantMessenger(val programName: String) : Messenger {
+    override fun send(message: String) = println("Send message: `$message`")
 }
 
-@Throws(IOException::class)
-fun acceptApology() {
-    throw IOException()
+interface PhotoDevice {
+    fun takePhoto()
 }
 
-val translator = { utterance: String ->
-    println(utterance.toLowerCase().capitalize())
+class PhotoCamera : PhotoDevice {
+    override fun takePhoto() = println("Take a photo")
 }
+
+class SmartPhone(val name: String, m: Messenger, p: PhotoDevice) : Messenger by m, PhotoDevice by p
