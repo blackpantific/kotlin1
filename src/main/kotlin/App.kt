@@ -1,49 +1,57 @@
+@file:JvmName("Hero")
+
+import java.io.IOException
+import java.util.*
 
 fun main(args: Array<String>) {
 
-//    println("fdfdf".addEnthusiasm(5))
+    val adversary = Jhava()
+    println(adversary.utterGreeting())
 
-    "Madrigal has left the building".easyPrint().addEnthusiasm().easyPrint()
-    42.easyPrint()
-    "Hello world".numVowels
+    val friendshipLevel = adversary.determineFriendshipLevel()
+    println(friendshipLevel?.lowercase(Locale.getDefault()) ?: "It's complicated.")
 
-    val nullableString: String? = null
-    nullableString printWithDefault "Default string"
+    val adversaryHitPoints: Int = adversary.hitPoints
+    println(adversaryHitPoints.dec())
+    println(adversaryHitPoints.javaClass)
 
-    var res = "Hello world some string".doSmthWithString {
-        //работать не будет потому что эти ф-ции возвращают новую стрингу
-        toUpperCase()
-        reversed()
+    adversary.greeting = "Hello, Hero."
+    println(adversary.utterGreeting())
+
+    adversary.offerFood()
+
+    try {
+        adversary.extendHandInFriendship()
+    } catch (e: Exception) {
+        println("Begone, foul beast!")
     }
 }
 
-//если создать расширение для какого-то класса, то оно будет работать и на наследниках
-//fun Any.easyPrint() = println(this)
+fun makeProclamation() = "Greetings, beast!"
 
-fun String.addEnthusiasm(amount: Int = 1) = this + "!".repeat(amount)
-
-//обобщенная функция-расширение
-fun <T> T.easyPrint(): T {
-    println(this)
-    return this
+@JvmOverloads
+fun handOverFood(leftHand: String = "berries", rightHand: String = "beef") {
+    println("Mmmm... you hand over some delicious $leftHand and $rightHand.")
 }
 
-//свойства расширения
-val String.numVowels
-    get() = count { "aeiouy".contains(it) }
+class Spellbook {
+    @JvmField
+    val spells = listOf("Magic Ms. L", "Lay on Hans")
 
-//или же так
-fun String.numVowels(): Int = count { contains(it) }
+    companion object {
+        @JvmField
+        val MAX_SPELL_COUNT = 10
 
-//Ключевое слово infix доступно для расширений и функций
-//класса с одним аргументом и позволяет использовать более
-//ясный синтаксис вызова функции. Если функция объявлена с infix,
-//вы можете отбросить точку между объектом- приемником и вызовом
-//функции, а также скобки вокруг аргумента.
+        @JvmStatic
+        fun getSpellbookGreeting() = println("I am the Great Grimoire!")
+    }
+}
 
-infix fun String?.printWithDefault(default: String) = print(this ?: default)
+@Throws(IOException::class)
+fun acceptApology() {
+    throw IOException()
+}
 
-public fun String.doSmthWithString(func: String.() -> String): String{
-    var res = this + func.invoke(this)
-    return res
+val translator = { utterance: String ->
+    println(utterance.toLowerCase().capitalize())
 }
