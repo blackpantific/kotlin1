@@ -2,23 +2,34 @@ import kotlin.reflect.KProperty
 
 fun main() {
 
-    val tom = Person("Tom", 37)
-    println(tom.age)    //37
-    tom.age = 38
-    println(tom.age)    //38
-    tom.age = -139
-    println(tom.age)    //38
+}
 
-}
-class Person(val name: String, _age: Int){
-    var age: Int by LoggerDelegate(_age)
-}
-class LoggerDelegate(private var personAge: Int) {
-    operator fun getValue(thisRef: Person, property: KProperty<*>): Int{
-        return personAge
+class MyClass{
+
+    var p = lazy {
+        "hello world"
     }
-    operator fun setValue(thisRef: Person, property: KProperty<*>, value: Int){
-        println("Устанавливаемое значение: $value")
-        if(value > 0 && value < 110) personAge = value
+
+    var db by getDouble()
+
+    fun getSomeData(): Unit{
+        var c = 5
+        var e = 7
+        println(e + c)
+
     }
+}
+
+private operator fun Double.setValue(myClass: MyClass, property: KProperty<*>, any: Any) {
+    myClass.db = 100.0
+}
+
+private operator fun Double.getValue(myClass: MyClass, property: KProperty<*>): Any {
+    return 10.0
+}
+
+
+public fun getDouble(): Double{
+    var c = Math.PI
+    return c
 }
