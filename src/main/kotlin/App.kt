@@ -1,55 +1,86 @@
 import java.util.Base64
+import javax.naming.Context
+import javax.swing.text.AttributeSet
+import javax.swing.text.View
+
+//КЛАССЫ
 
 fun main(args: Array<String>) {
 
+    println("Построение класса Derived(\"hello\", \"world\")")
+    Derived("hello", "world")
+}
 
-    var a: Generic<in A> = Generic(A("1"))
-    var b: Generic<Base> = Generic(B(1))
+//Если у конструктора есть аннотации или
+//модификаторы видимости, ключевое слово constructor
+//обязательно, и модификаторы используются перед ним.
+class Customer @Inject constructor(name: String) {
+    /*...*/
+}
 
-    //b = a //нельзя присвоить b = a если 
+annotation class Inject
 
-    a = b
-    var re = a.item//на этом этапе в a.item лежит экземпляр класса B
-    a.item = Base()//а теперь здесь лежит Base класс, что вообще полный трындец, ломающий
-        //всю ко- и контрвариантность и всю логику, которую я читал в учебнике
+//пример с наследованием и вызовом функции с одинаковым именем из родительского класса
 
+open class Base{
+    var someString = "Hello world"
+    var myIntVal: Int
 
-    if(b.item is A){
-        var c = 5
-        b.item = A("2")//выполняем присваивание несмотря на то, что типа переменой
-        // указан с параметром типа out
-        //b.item = B(1)// Type mismatch. Required: A Found: B
+    open fun getInfo(){
+        println("Hello world")
     }
 
-    //короче на данном этапе я могу сделать следующие выводы
-    //out позволяет записать данные в дженерик класс, но поле, в котором будут храниться
-    //данные не доступно для изменения, из него можно только получить информацию
-    //in позволяет записать данные в класс, но получить их мы никак не можем, потому что поле
-    //в котором они хранятся имеет модификатор private
-    //то есть out T это тип T и все его наследники, а in T это тип T и все его родители
+    constructor(someInt: Int){
+        myIntVal = someInt
+    }
 }
 
+class Inherited : Base {
 
-//к примеру Generic<B> можем присвоить Generic<Base>, но изменить
-public class Generic<T>(_item: T) {
-    //можем только инициализировать переменную единожды и потом читать из нее
-    var item: T = _item
+    //может быть первичным конструктором, но в данном примере явно использую слово super для
+    //вызова родительского конструктора
+    constructor(someInt: Int) : super(someInt){
+
+    }
+    fun doSmth(){
+        super.getInfo()
+    }
+
+    override fun getInfo(){
+        println("Hello world 111")
+    }
 }
 
-//public class Generic<T>(_item: T){
-//    var item: T = _item
-//}
-
-public open class Base {
-    var baseProperty = "Base property string"
+interface Shape {
+    val vertexCount: Int
 }
 
-public class A(_name: String) : Base() {
+//keyword override может использоваться в главном конструкторе
+class Rectangle(override val vertexCount: Int = 4) : Shape // Всегда имеет 4 вершины
 
-    public var name: String = _name
+//мы можем сменить val на var, но не наоборот
+class Polygon : Shape {
+    override var vertexCount: Int = 0  // Может быть установлено любое количество
 }
 
-public class B(_int: Int) : Base() {
+//хороший пример для отображения порядка инициализации свойств и всего остального у родителя
+//и дочернего классов. Запускать из main-функции!
 
-    public var number: Int = _int
+open class Base1(val name: String) {
+
+    init { println("Инициализация класса Base") }
+
+    open val size: Int =
+        name.length.also { println("Инициализация свойства size в класса Base: $it") }
+}
+
+class Derived(
+    name: String,
+    val lastName: String,
+) : Base1(name.replaceFirstChar { it.uppercase() }.also { println("Аргументы, переданные в конструктор класса Base: $it") }) {
+
+    init { println("Инициализация класса Derived") }
+
+    override val size: Int =
+        (super.size + lastName.length).also { println("Инициализация свойства size в классе Derived: $it") }
 }
