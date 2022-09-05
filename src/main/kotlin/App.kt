@@ -32,3 +32,12 @@ fun copy(from: Array<Any>, to: Array<Any>) {
 //означает, что мы можем вызывать только get(). Таков наш подход к вариативности
 //на месте использования, и он соответствует Array<? extends Object> из Java, но в более простом виде.
 fun copy1(from: Array<out Any>, to: Array<Any>) { }
+
+class Array<T>(val size: Int) {
+
+    //если мы пишем Array<out Any>, то мы не можем вызвать метод set
+    operator fun get(index: Int): T {  }
+
+    //если мы пишем Array<in Any>, то мы не можем вызвать метод get
+    operator fun set(index: Int, value: T) { }
+}
