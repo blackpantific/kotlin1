@@ -1,52 +1,34 @@
-//указываем что файл App.kt находится внутри пакета myNew, чтобы
-// иметь возможность обращаться к классам объявленным внутри этого файла
-
-package myNew
-import javax.sql.rowset.Predicate
-
 fun main(args: Array<String>) {
 
-    var vase = Base()
+    val ints: Array<Int> = arrayOf(1, 2, 3)
+    val any = Array<Any>(3) { "" }
+    //невозможно сделать из-за инвариантности
+    copy(ints, any)
 }
 
-//расширение для nullable-типов
-fun Any?.toString(): String {
-    if (this == null) return "null"
-    // после проверки на null, `this` автоматически приводится к не-null типу,
-    // поэтому toString() обращается (ориг.: resolves) к функции-члену класса Any
-    return this.toString()
+//ВАРИАТИВНОСТЬ НА МЕСТЕ ОБЪЯВЛЕНИЯ
+interface Comparable<in T> {
+    operator fun compareTo(other: T): Int
 }
 
-//расширение для объекта-компаньона
-class MyClass {
-    companion object { } // называется "Companion"
+fun demo(x: Comparable<Number>) {
+    x.compareTo(1.0) // 1.0 имеет тип Double, расширяющий Number
+    // Таким образом, мы можем присвоить значение x переменной типа Comparable<Double>
+    val y: Comparable<Double> = x // OK!
 }
 
-fun MyClass.Companion.printCompanion() { println("companion") }
-
-open class Base{
-    open fun outputSomeText(){
-        println("Hello world")
-    }
+fun copy(from: Array<Any>, to: Array<Any>) {
+    assert(from.size == to.size)
+    for (i in from.indices)
+        to[i] = from[i]
 }
 
-class Inherited() : Base(){
+//ВАРИАТИВНОСТЬ НА МЕСТЕ ИСПОЛЬЗОВАНИЯ
 
-    //расширение, объявленное внутри класса можно вызывать только внутри класса
-    fun Base.extensionFunc(){
-        this.outputSomeText()
-        //this с квалификатором
-        this@Inherited.outputSomeText()
-        println("Invocation from inherited class")
-    }
-
-    override fun outputSomeText(){
-        println("ITMO is the best")
-    }
-
-    constructor(val1: Int) : this() {
-        //
-        var b = Base().extensionFunc()
-    }
-
-}
+//Произошедшее здесь называется проекция типов:
+//мы сказали, что from — не просто массив, а ограниченный
+//(спроецированный): мы можем вызывать только те методы,
+//которые возвращают параметризованный тип T, что в этом случае
+//означает, что мы можем вызывать только get(). Таков наш подход к вариативности
+//на месте использования, и он соответствует Array<? extends Object> из Java, но в более простом виде.
+fun copy1(from: Array<out Any>, to: Array<Any>) { }
