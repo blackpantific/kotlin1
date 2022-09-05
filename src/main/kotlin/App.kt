@@ -1,42 +1,52 @@
+//указываем что файл App.kt находится внутри пакета myNew, чтобы
+// иметь возможность обращаться к классам объявленным внутри этого файла
+
+package myNew
 import javax.sql.rowset.Predicate
 
 fun main(args: Array<String>) {
 
-    var myAction: Action<Int> = Action { val1, val2 ->
-        println(val1 + val2)
+    var vase = Base()
+}
+
+//расширение для nullable-типов
+fun Any?.toString(): String {
+    if (this == null) return "null"
+    // после проверки на null, `this` автоматически приводится к не-null типу,
+    // поэтому toString() обращается (ориг.: resolves) к функции-члену класса Any
+    return this.toString()
+}
+
+//расширение для объекта-компаньона
+class MyClass {
+    companion object { } // называется "Companion"
+}
+
+fun MyClass.Companion.printCompanion() { println("companion") }
+
+open class Base{
+    open fun outputSomeText(){
+        println("Hello world")
+    }
+}
+
+class Inherited() : Base(){
+
+    //расширение, объявленное внутри класса можно вызывать только внутри класса
+    fun Base.extensionFunc(){
+        this.outputSomeText()
+        //this с квалификатором
+        this@Inherited.outputSomeText()
+        println("Invocation from inherited class")
     }
 
-    myAction.function(5,7)
-
-    var predicate = object : Predicate1<Int>{
-        override fun compare(val1: Int, val2: Int): Boolean {
-            return val1 > val2
-        }
+    override fun outputSomeText(){
+        println("ITMO is the best")
     }
 
-    var compareRes = predicate.compare(10, 18)
-
-    var func = Func<Int> { param1, param2 ->
-         param1 + param2
+    constructor(val1: Int) : this() {
+        //
+        var b = Base().extensionFunc()
     }
 
-    func.invokeFun(5, 8)
-
-}
-
-//обычный интерфейс
-interface MyInterface{
-    fun Go()
-}
-
-fun interface Action<T>{
-    fun function(val1: T, val2: T) : Unit
-}
-
-fun interface Predicate1<T>{
-    fun compare(val1: T, val2: T) : Boolean
-}
-
-fun interface Func<T>{
-    fun invokeFun(param1: T, param2: T) : T
 }
