@@ -1,46 +1,59 @@
 import kotlinx.coroutines.*
 
-import kotlin.coroutines.suspendCoroutine
+//ПОСЛЕДОВАТЕЛЬНОСТЬ ИСПОЛНЕНИЯ ЕЩЕ РАЗ
+//suspend fun main() {
+//    var c= 5
+//    coroutineScope {
+//
+//        async{ printHello()}
+//        println("Program has finished")//выполняется 2м
+//    }
+//
+//    println("some output")//выполняется 1м
+//}
+//
+//suspend fun printHello(){
+//    delay(500L)  // имитация продолжительной работы
+//    println("Hello work!")//выполняется 3м
+//}
 
+//suspend fun main() = coroutineScope{
+//
+//    launch {
+//        println("Корутина выполняется на потоке: ${Thread.currentThread().name}")
+//    }
+//    println("Функция main выполняется на потоке: ${Thread.currentThread().name}")
+//}
+
+//Конфигурация Dispatchers.Default
+//suspend fun main() = coroutineScope{
+//
+//    launch(Dispatchers.Default) {   // явным образом определяем диспетчер Dispatcher.Default
+//        println("Корутина выполняется на потоке: ${Thread.currentThread().name}")
+//    }
+//    println("Функция main выполняется на потоке: ${Thread.currentThread().name}")
+//}
+
+//Dispatchers.Unconfined
+//suspend fun main() = coroutineScope{
+//
+//    launch(Dispatchers.Unconfined) {
+//        println("Поток корутины (до остановки): ${Thread.currentThread().name}")//выполняется в main
+//        //до первой остановки, напоминает async/await в c# с продолжением выполнения в другом потоке
+//        //после выполнения await, а до этого метод вызывается и выполняется в том же потоке до оператора await
+//        delay(500L)
+//        println("Поток корутины (после остановки): ${Thread.currentThread().name}")
+//    }
+//
+//    println("Поток функции main: ${Thread.currentThread().name}")
+//}
+
+//newSingleThreadContext("Custom Thread") ручное создание потока с заданным именем
 suspend fun main() = coroutineScope{
 
-    //async можно использовать как launch, но он возвращает результат
-    //запускается немедленно, для отложенного запуска также как и с launch-функцией
-    //необходимо передать параметр CoroutineStart.LAZY
-//    var c = async {
-//        printHello1()
-//    }
-
-//    launch {
-//        //все, что находится в launch выполняется в отдельном "потоке
-//        //будь-то suspend-функция или простая
-//        sum(1,2)
-//    }
-
-    var deferred = async(start = CoroutineStart.LAZY) {
-        sum(1,2)
+    launch(newSingleThreadContext("Custom Thread")) {
+        println("Поток корутины: ${Thread.currentThread().name}")
     }
 
-    //deferred.start()//можно опустить
-    var res = deferred.await()//можно сразу написать .await() и дождаться результата
-
-    //var res = c.await()//как и в шарпе, функция ждет await и дальше не идет
-
-    var m = res
-    println("Hello world")
-}
-
-suspend fun printHello(){
-    delay(500L)  // имитация продолжительной работы
-    println("Hello work!")
-}
-
-suspend fun printHello1(): String{
-    delay(500L)  // имитация продолжительной работы
-    return "Hello world"
-}
-
-fun sum(a: Int, b: Int) : Int{
-    println("Coroutine has started")
-    return a + b
+    println("Поток функции main: ${Thread.currentThread().name}")
 }
