@@ -1,25 +1,46 @@
 import kotlinx.coroutines.*
 
+import kotlin.coroutines.suspendCoroutine
+
 suspend fun main() = coroutineScope{
 
-//    val job = launch{
-//        for(i in 1..5){
-//            println(i)
-//            delay(400L)
-//        }
+    //async можно использовать как launch, но он возвращает результат
+    //запускается немедленно, для отложенного запуска также как и с launch-функцией
+    //необходимо передать параметр CoroutineStart.LAZY
+//    var c = async {
+//        printHello1()
 //    }
-//
-//    println("Start")
-//    job.join()//ожидаем завершения корутины
-//    //что-то типа использования объекта таск в c# и вызоваметода ожидания не помню какого
-//    println("End")
 
-    var job = launch(start = CoroutineStart.LAZY) {
-        delay(200L)
-        println("Coroutine has started")
+//    launch {
+//        //все, что находится в launch выполняется в отдельном "потоке
+//        //будь-то suspend-функция или простая
+//        sum(1,2)
+//    }
+
+    var deferred = async(start = CoroutineStart.LAZY) {
+        sum(1,2)
     }
 
-    println("Other actions in main method")
-    job.start()//запуск корутины вручную, а не сразу,
-    // как в случае с вызовом launch без параметров
+    //deferred.start()//можно опустить
+    var res = deferred.await()//можно сразу написать .await() и дождаться результата
+
+    //var res = c.await()//как и в шарпе, функция ждет await и дальше не идет
+
+    var m = res
+    println("Hello world")
+}
+
+suspend fun printHello(){
+    delay(500L)  // имитация продолжительной работы
+    println("Hello work!")
+}
+
+suspend fun printHello1(): String{
+    delay(500L)  // имитация продолжительной работы
+    return "Hello world"
+}
+
+fun sum(a: Int, b: Int) : Int{
+    println("Coroutine has started")
+    return a + b
 }
