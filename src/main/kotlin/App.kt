@@ -1,19 +1,29 @@
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.produce
 
-suspend fun main() = coroutineScope {
+suspend fun main() = coroutineScope{
 
-    val downloader = async {
-        println("Начинаем загрузку файлов")
-        for (i in 1..5) {
-            println("Загружен файл $i")
-            delay(500L)
+    val channel = Channel<Int>()
+    launch {
+        for (n in 1..5) {
+            // отправляем данные через канал
+            channel.send(n)
         }
+        channel.close()
     }
-    delay(800L)     // установим задержку, чтобы несколько файлов загрузились
-    println("Надоело ждать, пока все файлы загрузятся. Прерву-ка я загрузку...")
-    downloader.cancelAndJoin()    // отменяем корутину
-    downloader.await()//если мы используем async/await, то при отмене асинка надо использовать блок try или
-    //вылетит исключение
-    // ожидаем завершения корутины
-    println("Работа программы завершена")
+
+    // получаем данные из канала
+    for(user in channel) {  // Получаем данные из канала
+        println(user)
+    }
+    println("End")
+}
+
+fun CoroutineScope.getUsers(): ReceiveChannel<String> = produce{
+    val users = listOf("Tom", "Bob", "Sam")
+    for (user in users) {
+        send(user)
+    }
 }
